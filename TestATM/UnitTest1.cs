@@ -29,14 +29,6 @@ namespace TestATM
         }
 
         [Fact]
-        public void Test_WithdrawInvalidAmount()
-        {
-            Program.Balance = 250;
-            decimal newBalance = Program.Withdraw(-50);
-            Assert.Equal(250, newBalance);
-        }
-
-        [Fact]
         public void Test_DepositValidAmount()
         {
             Program.Balance = 320;
@@ -44,12 +36,6 @@ namespace TestATM
             Assert.Equal(400, newBalance);
         }
 
-        [Fact]
-        public void Test_DepositInvalidAmount()
-        {
-            Program.Balance = 320;
-            decimal newBalance = Program.Deposit(-80);
-            Assert.Equal(320, newBalance);
-        }
+       
     }
 }

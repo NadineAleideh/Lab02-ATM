@@ -76,18 +76,18 @@
 
         public static decimal Withdraw(decimal amount)
         {
-      
-            if (amount > Balance)
+            bool validate = Validatewidthdrow(amount);
+
+            while (!validate)
             {
-                Console.WriteLine($"since your Balance {Balance} you cannot withdraw amount bigger than your Balance!");
-                return Balance;
+                Console.WriteLine($"since your Balance {Balance} you cannot withdraw amount bigger than your Balance.. try again!");
+                amount = GetAmount();
+                validate = Validatewidthdrow(amount);
             }
-            else
-            {
-                Balance -= amount;
-                RecordTransaction($"Withdraw -> {amount}");
-                return Balance;
-            }
+
+            Balance -= amount;
+            RecordTransaction($"Withdraw -> {amount}");
+            return Balance;
         }
 
         public static decimal Deposit(decimal amount)
@@ -158,7 +158,8 @@
                 decimal testValue = Convert.ToDecimal(input);
                 if (testValue <= 0)
                     return false;
-                return true;
+
+                    return true;
             }
             catch (FormatException)
             {
@@ -177,8 +178,20 @@
                 return false;
 
             }
-                
-           
+
         }
+
+        public static bool Validatewidthdrow(decimal input)
+        {
+            if (input > Balance)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
     }
 }
