@@ -27,7 +27,7 @@
         {
             while (true)
             {
-                Console.WriteLine("Please choose an option:\n");
+                Console.WriteLine("Please choose an transaction:\n");
                 Console.WriteLine("1. View Balance\n");
                 Console.WriteLine("2. Withdraw\n");
                 Console.WriteLine("3. Deposit\n");
@@ -47,52 +47,20 @@
                             throw new Exception("Your Balance is 0 you cannot make a withdraw transactions!\n");
                         }
                         Console.WriteLine("Enter money amount to withdraw:");
-                        decimal withdrawAmount;
-                        if (decimal.TryParse(Console.ReadLine(), out withdrawAmount))
-                        {
-                            Balance = Withdraw(withdrawAmount);
+                        
+                            Balance = Withdraw(GetAmount());
 
-                        }
-                        else
-                        {
-                            Console.WriteLine("Invalid amount. Please try again.\n");
-                        }
                         break;
                     case "3":
                         Console.WriteLine("Enter money amount to deposit:");
-                        decimal depositAmount;
-                        if (decimal.TryParse(Console.ReadLine(), out depositAmount))
-                        {
-                            Balance = Deposit(depositAmount);
-
-                        }
-                        else
-                        {
-                            Console.WriteLine("Invalid amount. Please try again.");
-                        }
+                        Balance = Deposit(GetAmount());
+                        
                         break;
                     case "4":
                         Console.WriteLine("Thank you for using the our services! Do you want a receipt? Enter Y or N:\n");
-                        while (true)
-                        {
-                            string option2 = Console.ReadLine().ToLower();
+                       GenerateReceipt();
+                       return;
 
-
-                            switch (option2)
-                            {
-                                case "y":
-                                    GenerateReceipt();
-                                    return;
-
-                                case "n":
-                                    return;
-
-                                default:
-                                    Console.WriteLine("Invalid option. Please try again.");
-                                    break;
-                            }
-
-                        }
 
                     default:
                         Console.WriteLine("Invalid option. Please try again.");
@@ -108,37 +76,25 @@
 
         public static decimal Withdraw(decimal amount)
         {
-            if (amount <= 0)
+            bool validate = Validatewidthdrow(amount);
+
+            while (!validate)
             {
-                Console.WriteLine("Invalid amount. Please enter a positive value.");
-                return Balance;
+                Console.WriteLine($"since your Balance {Balance} you cannot withdraw amount bigger than your Balance.. try again!");
+                amount = GetAmount();
+                validate = Validatewidthdrow(amount);
             }
-            else if (amount > Balance)
-            {
-                Console.WriteLine("you cannot withdraw amount bigger than your Balance!");
-                return Balance;
-            }
-            else
-            {
-                Balance -= amount;
-                RecordTransaction($"Withdraw -> {amount}");
-                return Balance;
-            }
+
+            Balance -= amount;
+            RecordTransaction($"Withdraw -> {amount}");
+            return Balance;
         }
 
         public static decimal Deposit(decimal amount)
         {
-            if (amount < 0)
-            {
-                Console.WriteLine("Invalid amount. Please enter a positive value.");
-                return Balance;
-            }
-            else
-            {
                 Balance += amount;
                 RecordTransaction($"Deposit -> {amount}");
                 return Balance;
-            }
         }
 
         public static void RecordTransaction(string transaction)
@@ -148,16 +104,94 @@
 
         public static void GenerateReceipt()
         {
-            Console.WriteLine("******** RECEIPT ********");
-            Console.WriteLine($"Current Balance: {ViewBalance()}");
-            Console.WriteLine("All Transactions:\t");
-            foreach (string transaction in Transactions)
+            string? userinput;
+            userinput = Console.ReadLine()!;
+            string testedValue = userinput.ToLower();
+            bool validate = ValidateInputRecipet(testedValue);
+
+            while (!validate)
             {
-                Console.WriteLine(transaction);
+                Console.WriteLine("please enter y if yes or n if no");
+                userinput = Console.ReadLine()!;
+                testedValue = userinput.ToLower();
+                validate = ValidateInputRecipet(testedValue);
             }
-            Console.WriteLine("\n************************\n");
+
+            if (testedValue == "y")
+            {
+                Console.WriteLine("******** RECEIPT ********");
+                Console.WriteLine($"Current Balance: {ViewBalance()}");
+                Console.WriteLine("All Transactions:\t");
+                foreach (string transaction in Transactions)
+                {
+                    Console.WriteLine(transaction);
+                }
+                Console.WriteLine("\n************************\n");
+            }
+            else
+            {
+                return;
+            }
         }
 
+        public static decimal GetAmount()
+        {
+            string ? userinput;
+            userinput  = Console.ReadLine()!;
+            bool validate = ValidateInput(userinput);
+
+            while (!validate)
+            {
+                Console.WriteLine("please enter a valid amount");
+                userinput = Console.ReadLine()!;
+                validate  = ValidateInput(userinput);
+            }
+            decimal input = Convert.ToDecimal(userinput);
+
+            return input;
+        }
+
+        public static bool ValidateInput(string input)
+        {
+            try
+            {
+                decimal testValue = Convert.ToDecimal(input);
+                if (testValue <= 0)
+                    return false;
+
+                    return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
+
+        public static bool ValidateInputRecipet(string input)
+        { 
+                if (input == "y" || input == "n")
+                {
+                    return true;
+                }
+            else
+            {
+                return false;
+
+            }
+
+        }
+
+        public static bool Validatewidthdrow(decimal input)
+        {
+            if (input > Balance)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
 
     }
 }
